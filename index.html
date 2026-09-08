@@ -81,19 +81,6 @@
   }
   @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
 
-  /* 右上角土味访客计数 */
-  .counter {
-    position: fixed; top: 12px; right: 14px;
-    font-family: "Press Start 2P", monospace;
-    font-size: 10px;
-    color: #0ff;
-    text-shadow: 0 0 6px #0ff;
-    line-height: 1.8;
-    text-align: right;
-    pointer-events: none;
-  }
-  .counter b { color: #ff0; text-shadow: 0 0 8px #f60; }
-
   /* 左上角提示 */
   .hint {
     position: fixed; top: 12px; left: 14px;
@@ -126,14 +113,11 @@
 <div id="stage"><div id="word">gay</div></div>
 
 <div class="hint">👆 点一下 · 换个心情</div>
-<div class="counter">你是第 <b id="hits">8848</b> 位<br>尊贵游客 🌈</div>
-
-<div class="marquee"><span>🌈 土到极致 · 就是潮 · 土到极致 · 就是潮 · GAY 给 ？！给给 ？！ · 💀 霓虹灯都为我闪烁 💀 · ✨ 全城最靓的仔 ✨ · 🌈 土到极致 · 就是潮 · 土到极致 · 就是潮 · </span></div>
+<div class="marquee"><span>📢 成为给的 100 种好处，专家直呼太惊人 📢 做个小练习来检测你是否是给 📢 不要抵抗，快点成为给给 📢 成为给的 100 种好处，专家直呼太惊人 📢 做个小练习来检测你是否是给 📢 不要抵抗，快点成为给给 📢 </span></div>
 
 <script>
 (function () {
   const word = document.getElementById('word');
-  const hits = document.getElementById('hits');
 
   /* ---------- 文字循环 ---------- */
   const TEXTS = ['gay', '给', '？！给给！？'];
@@ -190,7 +174,7 @@
   /* 每次调用：随机字体、字号、字重、字距、倾斜 + 每个字乱飞 */
   function remixStyle() {
     word.style.fontFamily = pick(FONTS);
-    word.style.fontSize = rnd(9, 18).toFixed(1) + 'vw';
+    word.style.fontSize = rnd(16, 30).toFixed(1) + 'vw';
     word.style.fontWeight = pick([300, 400, 700, 900]);
     word.style.fontStyle = pick(['normal', 'normal', 'italic']);
     word.style.letterSpacing = rnd(-0.06, 0.35).toFixed(2) + 'em';
@@ -266,7 +250,6 @@
     void word.offsetWidth; // 重启动画
     word.classList.add('swap');
     spinBoost = 14;
-    hits.textContent = 8848 + Math.floor(Math.random() * 100000) + 1;
   }
 
   document.addEventListener('pointerdown', e => {
