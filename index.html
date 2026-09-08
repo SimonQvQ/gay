@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌈 GAY 🌈 土到极致就是潮</title>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&family=Rubik+Mono+One&family=Bungee+Shade&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* 星空背景 */
+  .stars {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(1px 1px at 20% 30%, #fff8, transparent),
+      radial-gradient(1px 1px at 40% 70%, #fff6, transparent),
+      radial-gradient(2px 2px at 60% 20%, #fff5, transparent),
+      radial-gradient(1px 1px at 80% 50%, #fff7, transparent),
+      radial-gradient(1px 1px at 10% 80%, #fff4, transparent),
+      radial-gradient(2px 2px at 90% 85%, #fff3, transparent),
+      radial-gradient(1px 1px at 50% 90%, #fff5, transparent),
+      radial-gradient(1px 1px at 70% 40%, #fff4, transparent);
+    animation: twinkle 3s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes twinkle { from { opacity: .5; } to { opacity: 1; } }
+
+  /* 舞台 */
+  #stage {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    perspective: 900px;
+  }
+
+  #word {
+    transform-style: preserve-3d;
+    line-height: 1.1;
+    white-space: nowrap;
+    text-align: center;
+    will-change: transform, text-shadow, color;
+  }
+  #word .ch {
+    display: inline-block;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  /* 点击换字时的爆裂动画 */
+  #word.swap .ch { animation: pop .45s cubic-bezier(.2,1.6,.4,1) both; }
+  @keyframes pop {
+    0%   { transform: scale(2.5) rotate(360deg); opacity: 0; filter: blur(8px); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0); }
+  }
+
+  /* 底部跑马灯 */
+  .marquee {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    padding: 8px 0;
+    background: linear-gradient(90deg, rgba(255,0,0,.15), rgba(255,165,0,.15), rgba(255,255,0,.15), rgba(0,255,0,.15), rgba(0,127,255,.15), rgba(75,0,130,.15), rgba(238,130,238,.15));
+    border-top: 2px solid rgba(255,255,255,.2);
+    white-space: nowrap; overflow: hidden;
+    font-family: "ZCOOL KuaiLe", "Comic Sans MS", cursive;
+    font-size: 18px;
+    color: #fff;
+    text-shadow: 0 0 8px #ff0, 0 0 16px #f0f;
+    animation: rainbowbg 2s linear infinite;
+  }
+  .marquee span {
+    display: inline-block;
+    animation: scroll 12s linear infinite;
+    padding-right: 100%;
+  }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+  /* 左上角提示 */
+  .hint {
+    position: fixed; top: 12px; left: 14px;
+    font-family: "ZCOOL KuaiLe", "Comic Sans MS", cursive;
+    font-size: 14px;
+    color: #fff8;
+    pointer-events: none;
+    animation: twinkle 1.5s ease-in-out infinite alternate;
+  }
+
+  /* 点击 Emoji 粒子 */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 28px;
+    z-index: 99;
+    animation: fly 1.2s ease-out forwards;
+  }
+  @keyframes fly {
+    0%   { transform: translate(0,0) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(.3); opacity: 0; }
+  }
+
+  @keyframes rainbowbg { to { filter: hue-rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+<div id="stage"><div id="word">gay</div></div>
+
+<div class="hint">👆 点一下 · 换个心情</div>
+<div class="marquee"><span>📢 成为给的 100 种好处，专家直呼太惊人 📢 做个小练习来检测你是否是给 📢 不要抵抗，快点成为给给 📢 成为给的 100 种好处，专家直呼太惊人 📢 做个小练习来检测你是否是给 📢 不要抵抗，快点成为给给 📢 </span></div>
+
+<script>
+(function () {
+  const word = document.getElementById('word');
+
+  /* ---------- 文字循环 ---------- */
+  const TEXTS = ['gay', '给', '？！给给！？'];
+  let idx = 0;
+
+  /* ---------- 彩虹色 3D 挤出 ---------- */
+  let hue = 0;
+  const DEPTH = 18; // 3D 厚度层数
+
+  function rainbowShadows(h) {
+    let s = [];
+    for (let i = 1; i <= DEPTH; i++) {
+      s.push(`${i * 1.4}px ${i * 1.4}px 0 hsl(${(h + i * 16) % 360}, 100%, 50%)`);
+    }
+    // 外发光
+    s.push(`0 0 28px hsla(${h % 360},100%,60%,.9)`);
+    s.push(`0 0 70px hsla(${(h + 60) % 360},100%,60%,.7)`);
+    return s.join(', ');
+  }
+
+  /* ---------- 字体 / 版式 / 大小 随机池 ---------- */
+  const FONTS = [
+    '"Rubik Mono One", "Arial Black", sans-serif',
+    '"Bungee Shade", Impact, sans-serif',
+    '"Press Start 2P", monospace',
+    '"Comic Sans MS", "ZCOOL KuaiLe", cursive',
+    '"ZCOOL KuaiLe", "Comic Sans MS", cursive',
+    '"Ma Shan Zheng", "KaiTi", "楷体", serif',
+    '"Zhi Mang Xing", cursive',
+    '"STHupo", "华文琥珀", "ZCOOL KuaiLe", sans-serif',
+    '"STCaiyun", "华文彩云", "ZCOOL KuaiLe", sans-serif',
+    '"LiSu", "隶书", "Ma Shan Zheng", serif',
+    '"YouYuan", "幼圆", "ZCOOL KuaiLe", sans-serif',
+    'Impact, "Arial Black", sans-serif',
+    '"Brush Script MT", "Ma Shan Zheng", cursive',
+    '"Courier New", monospace',
+    '"Times New Roman", Georgia, serif',
+    'fantasy, "ZCOOL KuaiLe", sans-serif'
+  ];
+
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  function buildChars(text) {
+    word.innerHTML = '';
+    for (const c of text) {
+      const s = document.createElement('span');
+      s.className = 'ch';
+      s.textContent = c;
+      word.appendChild(s);
+    }
+  }
+
+  /* 每次调用：随机字体、字号、字重、字距、倾斜 + 每个字乱飞 */
+  function remixStyle() {
+    word.style.fontFamily = pick(FONTS);
+    word.style.fontSize = rnd(16, 30).toFixed(1) + 'vw';
+    word.style.fontWeight = pick([300, 400, 700, 900]);
+    word.style.fontStyle = pick(['normal', 'normal', 'italic']);
+    word.style.letterSpacing = rnd(-0.06, 0.35).toFixed(2) + 'em';
+    word.style.textTransform = Math.random() < .5 ? 'uppercase' : 'lowercase';
+    word.style.fontVariant = Math.random() < .2 ? 'small-caps' : 'normal';
+
+    const skew = rnd(-14, 14);
+    word.style.transform = `skewX(${skew.toFixed(1)}deg)`;
+
+    // 每个字符：随机 3D 偏移 + 旋转，制造"乱飞版式"
+    const chars = word.children;
+    const scatter = Math.random() < .55; // 一半概率开启"群魔乱舞"排版
+    for (let i = 0; i < chars.length; i++) {
+      const c = chars[i];
+      if (scatter) {
+        c.style.transform =
+          `translate3d(${rnd(-40, 40).toFixed(0)}px, ${rnd(-55, 55).toFixed(0)}px, ${rnd(0, 90).toFixed(0)}px) ` +
+          `rotateX(${rnd(-40, 40).toFixed(0)}deg) rotateY(${rnd(-50, 50).toFixed(0)}deg) rotateZ(${rnd(-30, 30).toFixed(0)}deg) ` +
+          `scale(${rnd(.7, 1.5).toFixed(2)})`;
+      } else {
+        c.style.transform =
+          `translateZ(${rnd(0, 80).toFixed(0)}px) ` +
+          `rotateX(${rnd(-15, 15).toFixed(0)}deg) rotateY(${rnd(-25, 25).toFixed(0)}deg)`;
+      }
+    }
+  }
+
+  /* ---------- 主循环：旋转 + 彩虹 + 呼吸 ---------- */
+  let rotY = 0, rotX = -12, t = 0;
+  let spinBoost = 0; // 点击时加速旋转
+
+  function frame() {
+    t += 0.016;
+    hue = (hue + 1.6) % 360;                 // 彩虹不断流动
+    spinBoost *= 0.96;                        // 旋转缓动
+    rotY += 0.7 + spinBoost;
+    rotX = -12 + Math.sin(t * 0.9) * 22;     // 上下翻转
+    const breathe = 1 + Math.sin(t * 1.7) * 0.12; // 大小呼吸
+
+    word.style.color = `hsl(${hue}, 100%, 60%)`;
+    word.style.textShadow = rainbowShadows(hue);
+    word.style.transform =
+      `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${breathe})`;
+
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- 点击：换字 + 爆炸 + 计数 ---------- */
+  const EMOJIS = ['🌈','✨','💖','💀','🔥','⭐','💫','🎉','🦄','🍑'];
+
+  function boom(x, y) {
+    for (let i = 0; i < 14; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = pick(EMOJIS);
+      const ang = Math.random() * Math.PI * 2;
+      const dist = rnd(80, 260);
+      p.style.left = x + 'px';
+      p.style.top = y + 'px';
+      p.style.setProperty('--dx', Math.cos(ang) * dist + 'px');
+      p.style.setProperty('--dy', Math.sin(ang) * dist + 'px');
+      p.style.setProperty('--rot', rnd(-540, 540) + 'deg');
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 1300);
+    }
+  }
+
+  function next() {
+    idx = (idx + 1) % TEXTS.length;
+    buildChars(TEXTS[idx]);
+    remixStyle();
+    word.classList.remove('swap');
+    void word.offsetWidth; // 重启动画
+    word.classList.add('swap');
+    spinBoost = 14;
+  }
+
+  document.addEventListener('pointerdown', e => {
+    boom(e.clientX, e.clientY);
+    next();
+  });
+
+  /* ---------- 启动 ---------- */
+  buildChars(TEXTS[0]);
+  remixStyle();
+  setInterval(remixStyle, 2600); // 字体/版式/大小 不断变化
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
